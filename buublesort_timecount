@@ -1,0 +1,152 @@
+program sortowanie_babelkowe;
+
+uses
+crt, DateUtils, sysutils, dos;
+const
+  SIZE = 2500;
+  RANGE = 64;
+
+var tab : array [1..SIZE] of integer;
+    tab2 : array [1..SIZE] of integer;
+    tab3 : array [1..SIZE] of integer;
+    c1, c2, u : integer;
+    FromTime, ToTime : TDateTime;
+    DiffMinutes : integer;
+
+    hours: word;
+    minutes: word;
+    seconds: word;
+    milliseconds: word;
+procedure StartClock;
+begin
+  GetTime(hours, minutes, seconds, milliseconds);
+end;
+
+procedure StopClock;
+var seconds_count, milliseconds_count : longint;
+    c_hours: word;
+    c_minutes: word;
+    c_seconds: word;
+    c_milliseconds: word;
+
+begin
+  GetTime(c_hours, c_minutes, c_seconds, c_milliseconds);
+  seconds_count := c_seconds - seconds + (c_minutes - minutes) * 60 + (c_hours - hours) * 3600;
+  milliseconds_count := c_milliseconds - milliseconds + (c_seconds - seconds)*1000 + (c_minutes - minutes) * 600000 + (c_hours - hours) * 36000000;;
+  //write(inttostr(seconds_count) + ' seconds = ');
+  writeln(inttostr(milliseconds_count) + ' ms');
+end;
+procedure getRandom();
+var i : integer;
+begin
+Randomize;
+for i := 1 to SIZE do
+    tab[i] := Random(RANGE);
+
+for i := 1 to SIZE do
+    begin
+    tab2[i]:=tab[i];
+    tab3[i]:=tab[i];
+    end;
+writeln();
+
+//for i := 1 to SIZE do
+//    write(tab[i],' ');
+//writeln();
+
+
+end;
+procedure show(var color1, color2 : integer);
+var p : integer;
+begin
+for p := 1 to SIZE do
+begin
+     if p=color1 then TextColor(LightBlue)
+     else if p=color2 then TextColor(Green)
+     else  TextColor(White);
+     write(tab[p],' ');
+end;
+     writeln();
+
+end;
+procedure Sort1();
+var i, j, x : integer;
+begin
+     for j:=1 to SIZE-1 do
+         for i := 1 to SIZE-1 do
+         if tab[i] > tab[i+1] then
+         begin
+            x := tab[i]; tab[i] := tab[i+1]; tab[i+1] := x;
+           // c1 := i; c2 := i+1;
+           // show(c1, c2);
+        end;
+end;
+
+procedure Sort2();
+var i, j, x, change : integer;
+begin
+j := SIZE - 1;
+     repeat
+       change := 0;
+       for i:=1 to j do
+            if tab2[i] > tab2[i+1] then
+            begin
+            x := tab2[i]; tab2[i] := tab2[i+1]; tab2[i+1] := x;
+           // c1 := i; c2 := i+1;
+           // show(c1, c2);
+            change := 1;
+            end;
+       if change=0 then j:=0
+       else j := j-1;
+
+     until j<1;
+
+end;
+
+procedure Sort3();
+var i, j, x, change, changeMIN, changeMAX : integer;
+    begin
+    changeMIN := 1; changeMAX := SIZE - 1;
+    repeat
+      change := 0;
+      for i := changeMIN to changeMAX do
+      if tab3[i] > tab3[i+1] then
+      begin
+         x := tab3[i]; tab3[i] := tab3[i+1]; tab3[i+1] := x;
+         if change = 0 then changeMIN := i;
+         change := i;
+      end;
+      if changeMIN > 1 then changeMIN := changeMIN - 1;
+      changeMAX := change - 1;
+    until change = 0;;
+    end;
+
+begin
+textcolor(white);
+getRandom();
+writeln(SIZE, ' elementow z zakresu ', RANGE);
+writeln();
+write('Sortowanie zwykle: ');
+StartClock;
+Sort1();
+StopClock;
+writeln('---------------');
+write('Sortowanie z jednostronnym pominieciem: ');
+StartClock;
+Sort2();
+StopClock;
+writeln('---------------');
+write('Sortowanie z dwustronnym pominieciem: ');
+StartClock;
+Sort3();
+StopClock;
+
+
+textcolor(white);
+//writeln();
+//for u := 1 to SIZE do
+//     write(tab3[u],' ');
+
+
+
+end.
